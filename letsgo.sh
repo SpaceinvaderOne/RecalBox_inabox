@@ -60,16 +60,33 @@ function download_recalbox {
     fi
     echo "Decompressed file verified."
     rm -f recalbox-x86_64.img.xz.sha1
-
-    # Rename existing file if it exists
+	
+	   # Rename new file to vdisk1.img
+    mv recalbox-x86_64.img vdisk1.img || { echo "Failed to rename file. Exiting..."; exit 1; }
+	
+	}
+	
+	
+function check_4_existing {
+    # Check if the vdisk1.img file exists
     if [[ -f "$download_location/vdisk1.img" ]]; then
-        old_filename=$(date +"vdisk1-old-%Y-%m-%d-%H-%M.img")
-        mv vdisk1.img "$download_location/$old_filename" || { echo "Failed to rename file. Exiting..."; exit 1; }
+        # Check if the REPLACE variable is set to "Yes"
+        if [[ "$REPLACE" == "Yes" ]]; then
+            # Rename existing file
+            old_filename=$(date +"vdisk1-old-%Y-%m-%d-%H-%M.img")
+            mv "$download_location/vdisk1.img" "$download_location/$old_filename" || { echo "Failed to rename file. Exiting..."; exit 1; }
+        else
+            echo "The VM is already installed and the vdisk is there."
+            echo "If you want to replace the existing VM, either delete it or set the REPLACE variable in the Docker template to allow me to replace the VM."
+            exit 1
+        fi
     fi
 
-    # Rename new file to vdisk1.img
-    mv recalbox-x86_64.img vdisk1.img || { echo "Failed to rename file. Exiting..."; exit 1; }
+ 
 }
+
+
+
 
 function expand_vdisk {
     vdisk_path="$download_location/vdisk1.img"
@@ -89,7 +106,7 @@ download_url_sha1="${download_url_sha1:-https://upgrade.recalbox.com/latest/down
 	domains_share=$(get_host_path "/vm_location")
     download_location="/vm_location/""$vm_name"
 	vdisk_location="$domains_share/$vm_name"
-    icon_location="/unraid_vm_icons/Recalbox-logo.png"  
+    icon_location="/unraid_vm_icons/Recalbox.png"  
 	XML_FILE="/tmp/recal.xml"
 }
 
@@ -147,23 +164,23 @@ function connect_retronas() {
     # Check if the CONNECT_RETRONAS variable is set to "Yes"
     if [ "$CONNECT_RETRONAS" != "Yes" ]; then
         echo "CONNECT_RETRONAS is not set to Yes. Skipping connection."
-        echo ""
-        echo ""
-        echo "However your RecalBox VM is now installed. You can see it in the Unraid VMs tab."
-        echo "It will run with the virual graphics card (vnc qxl) currently installed but to use properly"
-        echo "you should passthrough a GPU, Sound and a keyboard/mouse and/or game controller"
         return
     fi
+    
+    # Check if the VM is running
+    vm_running=$(virsh list --state-running | grep -w "$vm_name")
+    if [ -z "$vm_running" ]; then
+        echo "The VM $vm_name is not running. Exiting..."
+        exit 1
+    fi
 
-    echo "Starting RecalBox"
-    virsh start $vm_name
-    echo "This part may take a while as the VM takes a while to install on the first run"
-    echo "I am going to wait for 90 seconds then I will try and copy the necessary file"
-    echo "It may take a few attempts depending on how long it takes for you VM to fully install"
+    echo "This part may take a while if the vm is still booting"
+    echo "So if the vm hasnt fully started I may need to try a few times"
     echo "So I will try once every 30 seconds"
-	echo "I recommend opening a vnc console window into the Recalbox VM (on the vm tab - not here)"
-	echo "That way you will see when the install has finished"
-    sleep 60
+    echo ""
+	echo "Obiously make sure your RetroNAS vm is running for RecalBox to be able to connect to it! "
+    echo ""
+	echo ""
 
     # Try to copy the file to the Recalbox host up to 8 times with a 30 second gap
     echo "Trying to copy the file to Recalbox host..."
@@ -171,14 +188,12 @@ function connect_retronas() {
         sshpass -p "recalboxroot" scp -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /app/recalbox-boot.conf root@"$RECALBOX":/boot/recalbox-boot.conf
         if [ $? -eq 0 ]; then
             echo "File copied successfully."
-            echo "RecalBox should now be connected to your RetroNAS"
+            echo "I will need to just quickly reboot the VM"
+            echo "Then your RecalBox should be connected to your RetroNAS"
             echo ""
-			echo "I need to restart the vm now for the new config to take effect"
-			virsh reboot $vm_name
-            echo "RecalBox VM is now installed. You can see it in the Unraid VMs tab."
-            echo "It will run with the virtual graphics card currently installed but to use properly"
-            echo "you should passthrough a GPU, Sound and a keyboard/mouse and/or game controller"
-			sleep 30
+            virsh reboot $vm_name
+            echo "Ok so all done! Remember your RetroNAS VM should be running before you start RecalBox"
+            sleep 30
             return
         else
             echo "Failed to copy. Retrying in 30 seconds..."
@@ -188,18 +203,21 @@ function connect_retronas() {
 
     # If unable to copy the file after 8 attempts, exit with an error message
     echo "Giving up. Can't copy file to Recalbox host."
-	sleep 30
+    sleep 30
     exit 1
 }
+
 
 
 # Call the functions
 
 set_variables 
+connect_retronas
+check_4_existing 
 download_recalbox
 expand_vdisk
 download_xml
 download_icon
 define_recalbox
-connect_retronas
+
 
