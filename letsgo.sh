@@ -160,7 +160,15 @@ function download_icon {
     fi
 }
 
+function get_ip() {
+  retrohost="$1"
+  retronasip=$(ping -c 1 -4 $retrohost | awk -F'[()]' '/PING/{print $2}')
+  echo "IP address of $retrohost is: $retro_ip"
+}
+
 function connect_retronas() {
+   
+
     # Check if the CONNECT_RETRONAS variable is set to "Yes"
     if [ "$CONNECT_RETRONAS" != "Yes" ]; then
         echo "CONNECT_RETRONAS is not set to Yes. Skipping connection."
@@ -178,9 +186,16 @@ function connect_retronas() {
     echo "So if the vm hasnt fully started I may need to try a few times"
     echo "So I will try once every 30 seconds"
     echo ""
-	echo "Obiously make sure your RetroNAS vm is running for RecalBox to be able to connect to it! "
+    echo "Obiously make sure your RetroNAS vm is running for RecalBox to be able to connect to it! "
     echo ""
-	echo ""
+    echo ""
+	
+	get_ip  $RECALBOX
+   
+    # Edit the file
+    sed -i "s/\(sharenetwork_smb1=ROMS@\).*\(:recalbox\/roms:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
+    sed -i "s/\(sharenetwork_smb2=BIOS@\).*\(:recalbox\/bios:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
+    sed -i "s/\(sharenetwork_smb3=SAVES@\).*\(:recalbox\/saves:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
 
     # Try to copy the file to the Recalbox host up to 8 times with a 30 second gap
     echo "Trying to copy the file to Recalbox host..."
