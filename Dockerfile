@@ -17,8 +17,8 @@ COPY recalbox-boot.conf /app/
 
 # Set permissions
 RUN chmod +x /app/letsgo.sh && \
-    chmod 644 /app/recal.xml
-	chmod 777 /app/recalbox-boot.conf
+    chmod 644 /app/recal.xml && \
+    chmod 777 /app/recalbox-boot.conf
 
 # Expose the avahi-daemon port
 EXPOSE 5353/udp
@@ -28,4 +28,5 @@ ENTRYPOINT ["/app/letsgo.sh"]
 
 # Keep the container running
 CMD tail -f /dev/null
+
 
