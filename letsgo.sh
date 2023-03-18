@@ -190,7 +190,7 @@ function connect_retronas() {
     echo ""
     echo ""
 	
-	get_ip  $RECALBOX
+	get_ip  $RETRONAS
    
     # Edit the file
     sed -i "s/\(sharenetwork_smb1=ROMS@\).*\(:recalbox\/roms:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
