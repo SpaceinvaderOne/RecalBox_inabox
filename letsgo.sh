@@ -208,17 +208,17 @@ function connect_retronas() {
             echo ""
             virsh reboot $vm_name
             echo "Ok so all done! Remember your RetroNAS VM should be running before you start RecalBox"
-            sleep 30
+            sleep $TIMETOWAIT
             return
         else
             echo "Failed to copy. Retrying in 30 seconds..."
-            sleep 30
+            sleep $TIMETOWAIT
         fi
     done
 
     # If unable to copy the file after 8 attempts, exit with an error message
     echo "Giving up. Can't copy file to Recalbox host."
-    sleep 30
+    sleep $TIMETOWAIT
     exit 1
 }
 
@@ -234,5 +234,6 @@ expand_vdisk
 download_xml
 download_icon
 define_recalbox
+sleep $TIMETOWAIT
 
 
