@@ -163,12 +163,10 @@ function download_icon {
 function get_ip() {
   retrohost="$1"
   retronasip=$(ping -c 1 -4 $retrohost | awk -F'[()]' '/PING/{print $2}')
-  echo "IP address of $retrohost is: $retro_ip"
+  echo "IP address of $retrohost is: $retronasip"
 }
 
 function connect_retronas() {
-   
-
     # Check if the CONNECT_RETRONAS variable is set to "Yes"
     if [ "$CONNECT_RETRONAS" != "Yes" ]; then
         echo "CONNECT_RETRONAS is not set to Yes. Skipping connection."
@@ -182,16 +180,21 @@ function connect_retronas() {
         exit 1
     fi
 
-    echo "This part may take a while if the vm is still booting"
-    echo "So if the vm hasnt fully started I may need to try a few times"
+    echo "This part may take a while if the VM is still booting"
+    echo "So if the VM hasn't fully started, I may need to try a few times"
     echo "So I will try once every 30 seconds"
     echo ""
-    echo "Obiously make sure your RetroNAS vm is running for RecalBox to be able to connect to it! "
+    echo "Obiously make sure your RetroNAS VM is running for RecalBox to be able to connect to it!"
     echo ""
     echo ""
 	
-	get_ip  $RETRONAS
-   
+	get_ip $RETRONAS
+	
+    echo "I am adding this to the RecalBox config for RetroNAS:"
+    echo "sharenetwork_smb1=ROMS@$retronasip:recalbox/roms:username=$retronas_user:password=$retronas_password:vers=2.0"
+    echo "sharenetwork_smb2=BIOS@$retronasip:recalbox/bios:username=$retronas_user:password=$retronas_password:vers=2.0"
+    echo "sharenetwork_smb3=SAVES@$retronasip:recalbox/saves:username=$retronas_user:password=$retronas_password:vers=2.0"
+
     # Edit the file
     sed -i "s/\(sharenetwork_smb1=ROMS@\).*\(:recalbox\/roms:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
     sed -i "s/\(sharenetwork_smb2=BIOS@\).*\(:recalbox\/bios:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
