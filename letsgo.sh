@@ -197,9 +197,9 @@ function connect_retronas() {
     echo "sharenetwork_smb3=SAVES@$retronas_ip:recalbox/saves:username=$retronas_user:password=$retronas_password:vers=2.0"
 	
     # Edit the file
-    sed -i "s/sharenetwork_smb1=ROMS@.*:recalbox\/roms:username=.*:password=.*:vers=2.0/sharenetwork_smb1=ROMS@$retronas_ip:recalbox\/roms:username=$retronas_user:password=$retronas_password:vers=2.0/" /boot/recalbox-boot.conf
-    sed -i "s/sharenetwork_smb2=BIOS@.*:recalbox\/bios:username=.*:password=.*:vers=2.0/sharenetwork_smb2=BIOS@$retronas_ip:recalbox\/bios:username=$retronas_user:password=$retronas_password:vers=2.0/" /boot/recalbox-boot.conf
-    sed -i "s/sharenetwork_smb3=SAVES@.*:recalbox\/saves:username=.*:password=.*:vers=2.0/sharenetwork_smb3=SAVES@$retronas_ip:recalbox\/saves:username=$retronas_user:password=$retronas_password:vers=2.0/" /boot/recalbox-boot.conf
+    sed -i "s/sharenetwork_smb1=ROMS@.*:recalbox\/roms:username=.*:password=.*:vers=2.0/sharenetwork_smb1=ROMS@$retronas_ip:recalbox\/roms:username=$retronas_user:password=$retronas_password:vers=2.0/" /app/recalbox-boot.conf
+    sed -i "s/sharenetwork_smb2=BIOS@.*:recalbox\/bios:username=.*:password=.*:vers=2.0/sharenetwork_smb2=BIOS@$retronas_ip:recalbox\/bios:username=$retronas_user:password=$retronas_password:vers=2.0/" /app/recalbox-boot.conf
+    sed -i "s/sharenetwork_smb3=SAVES@.*:recalbox\/saves:username=.*:password=.*:vers=2.0/sharenetwork_smb3=SAVES@$retronas_ip:recalbox\/saves:username=$retronas_user:password=$retronas_password:vers=2.0/" /app/recalbox-boot.conf
 
     echo "Changed line for sharenetwork_smb1:"
 grep sharenetwork_smb1 /app/recalbox-boot.conf
