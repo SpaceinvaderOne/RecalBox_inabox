@@ -196,19 +196,19 @@ function connect_retronas() {
     echo "sharenetwork_smb2=BIOS@$retronas_ip:recalbox/bios:username=$retronas_user:password=$retronas_password:vers=2.0"
     echo "sharenetwork_smb3=SAVES@$retronas_ip:recalbox/saves:username=$retronas_user:password=$retronas_password:vers=2.0"
 	
-    # Edit the file
-    sed -i "s/sharenetwork_smb1=ROMS@.*:recalbox\/roms:username=.*:password=.*:vers=2.0/sharenetwork_smb1=ROMS@$retronas_ip:recalbox\/roms:username=$retronas_user:password=$retronas_password:vers=2.0/" /app/recalbox-boot.conf
-    sed -i "s/sharenetwork_smb2=BIOS@.*:recalbox\/bios:username=.*:password=.*:vers=2.0/sharenetwork_smb2=BIOS@$retronas_ip:recalbox\/bios:username=$retronas_user:password=$retronas_password:vers=2.0/" /app/recalbox-boot.conf
-    sed -i "s/sharenetwork_smb3=SAVES@.*:recalbox\/saves:username=.*:password=.*:vers=2.0/sharenetwork_smb3=SAVES@$retronas_ip:recalbox\/saves:username=$retronas_user:password=$retronas_password:vers=2.0/" /app/recalbox-boot.conf
+  # Edit the file
+    sed -i "s/\(sharenetwork_smb1=ROMS@\).*\(:recalbox\/roms:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
+    sed -i "s/\(sharenetwork_smb2=BIOS@\).*\(:recalbox\/bios:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
+    sed -i "s/\(sharenetwork_smb3=SAVES@\).*\(:recalbox\/saves:username=\).*\(:password=\).*\(:vers=2.0\)/\1$retronasip\2$retronas_user\3$retronas_password\4/" /app/recalbox-boot.conf
 
     echo "Changed line for sharenetwork_smb1:"
-grep sharenetwork_smb1 /app/recalbox-boot.conf
+    grep sharenetwork_smb1 /app/recalbox-boot.conf
 
-echo "Changed line for sharenetwork_smb2:"
-grep sharenetwork_smb2 /app/recalbox-boot.conf
+    echo "Changed line for sharenetwork_smb2:"
+    grep sharenetwork_smb2 /app/recalbox-boot.conf
 
-echo "Changed line for sharenetwork_smb3:"
-grep sharenetwork_smb3 /app/recalbox-boot.conf
+    echo "Changed line for sharenetwork_smb3:"
+    grep sharenetwork_smb3 /app/recalbox-boot.conf
 
     # Try to copy the file to the Recalbox host up to 8 times with a 30 second gap
     echo "Trying to copy the file to Recalbox host..."
