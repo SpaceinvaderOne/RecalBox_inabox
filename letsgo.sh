@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #--------------services-----------------------------
 # start for name resolution for recalbox - needed for ssh when auto connecting vm to retroNAS
