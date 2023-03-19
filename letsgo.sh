@@ -86,8 +86,6 @@ function check_4_existing {
 }
 
 
-
-
 function expand_vdisk {
     vdisk_path="$download_location/vdisk1.img"
     vdisk_size=$(qemu-img info "$vdisk_path" | grep "virtual size:" | awk '{print $3}')
@@ -162,8 +160,8 @@ function download_icon {
 
 function get_ip() {
   retrohost="$1"
-  retronasip=$(ping -c 1 -4 $retrohost | awk -F'[()]' '/PING/{print $2}')
-  echo "IP address of $retrohost is: $retronasip"
+  retronas_ip=$(ping -c 1 -4 $retrohost | awk -F'[()]' '/PING/{print $2}')
+  echo "IP address of $retrohost is: $retronas_ip"
 }
 
 function connect_retronas() {
@@ -189,7 +187,6 @@ function connect_retronas() {
 
     # Get the IP address of the RetroNAS
     get_ip $RETRONAS
-    retronas_ip=$retronasip
 
     echo "I am adding this to the RecalBox config for RetroNAS:"
     echo "sharenetwork_smb1=ROMS@$retronas_ip:recalbox/roms:username=$retronas_user:password=$retronas_password:vers=2.0"
