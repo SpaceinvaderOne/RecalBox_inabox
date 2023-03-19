@@ -86,8 +86,6 @@ function check_4_existing {
 }
 
 
-
-
 function expand_vdisk {
     vdisk_path="$download_location/vdisk1.img"
     vdisk_size=$(qemu-img info "$vdisk_path" | grep "virtual size:" | awk '{print $3}')
@@ -198,10 +196,7 @@ function connect_retronas() {
     echo ""
 
     # Edit the file
-    sed -i "/^#.*sharenetwork_cmd=.*/a sharenetwork_smb1=ROMS@$retronas_ip:recalbox/roms:username=$retronas_user:password=$retronas_password:vers=2.0" /app/recalbox-boot.conf
-    sed -i "/^#.*sharenetwork_cmd=.*/a sharenetwork_smb2=BIOS@$retronas_ip:recalbox/bios:username=$retronas_user:password=$retronas_password:vers=2.0" /app/recalbox-boot.conf
-    sed -i "/^#.*sharenetwork_cmd=.*/a sharenetwork_smb3=SAVES@$retronas_ip:recalbox/saves:username=$retronas_user:password=$retronas_password:vers=2.0" /app/recalbox-boot.conf
-
+    sed -i "/^#custom_retronas_config/a sharenetwork_smb1=ROMS@$retronas_ip:recalbox/roms:username=$retronas_user:password=$retronas_password:vers=2.0\nsharenetwork_smb2=BIOS@$retronas_ip:recalbox/bios:username=$retronas_user:password=$retronas_password:vers=2.0\nsharenetwork_smb3=SAVES@$retronas_ip:recalbox/saves:username=$retronas_user:password=$retronas_password:vers=2.0" /app/recalbox-boot.conf
     # 
     # Try to copy the file to the Recalbox host up to 8 times with a 30 second gap
     echo "Trying to copy the file to Recalbox host..."
