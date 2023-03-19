@@ -207,6 +207,7 @@ function connect_retronas() {
             echo "I will need to just quickly reboot the VM"
             echo "Then your RecalBox should be connected to your RetroNAS"
             echo ""
+			sshpass -p "recalboxroot" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@"$RECALBOX" "chmod 777 /boot/recalbox-boot.conf"
             virsh reboot $vm_name
             echo "Ok so all done! Remember your RetroNAS VM should be running before you start RecalBox"
             sleep $TIMETOWAIT
