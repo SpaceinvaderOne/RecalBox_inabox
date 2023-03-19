@@ -161,7 +161,7 @@ function download_icon {
 function get_ip() {
   retrohost="$1"
   retronas_ip=$(ping -c 1 -4 $retrohost | awk -F'[()]' '/PING/{print $2}')
-  echo "IP address of $retrohost is: $retronasip"
+  echo "IP address of $retrohost is: $retronas_ip"
 }
 
 function connect_retronas() {
